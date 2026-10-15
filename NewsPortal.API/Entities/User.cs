@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace NewsPortal.API.Entities
+﻿namespace NewsPortal.API.Entities
 {
     public class User
     {

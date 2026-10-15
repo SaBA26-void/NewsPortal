@@ -3,7 +3,7 @@
     public enum UserRole
     {
         User = 0,
-        Jurnalist = 1,
+        Journalist = 1,
         SuperAdmin = 2
     }
 }
