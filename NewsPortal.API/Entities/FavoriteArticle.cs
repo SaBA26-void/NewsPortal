@@ -1,0 +1,14 @@
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace NewsPortal.API.Entities
+{
+    public class FavoriteArticle
+    {
+        public int UserId { get; set; }
+
+        public User User { get; set; } = null;
+        public int ArticleId { get; set; }
+        public Article Article { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+}
