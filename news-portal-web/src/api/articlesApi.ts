@@ -20,3 +20,24 @@ export async function fetchArticleById(id: number) {
   const res = await api.get<Article>(`/Articles/${id}`);
   return res.data;
 }
+
+export type ArticleWritePayload = {
+  title: string;
+  content: string;
+  imageUrl?: string | null;
+  categoryId: number;
+};
+
+export async function createArticle(data: ArticleWritePayload) {
+  const res = await api.post<Article>("/Articles", data);
+  return res.data;
+}
+
+export async function updateArticle(id: number, data: ArticleWritePayload) {
+  const res = await api.put<Article>(`/Articles/${id}`, data);
+  return res.data;
+}
+
+export async function deleteArticle(id: number) {
+  await api.delete(`/Articles/${id}`);
+}
