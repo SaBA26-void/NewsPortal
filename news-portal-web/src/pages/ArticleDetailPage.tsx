@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchArticleById } from "../api/articlesApi";
+import { FavoriteButton } from "../components/FavoriteButton";
 import { Spinner } from "../components/Spinner";
 import { useLanguage } from "../context/LanguageContext";
 import type { Article } from "../types/article";
@@ -69,6 +70,9 @@ export function ArticleDetailPage() {
         {article.authorName} ·{" "}
         {new Date(article.createdAt).toLocaleDateString()}
       </p>
+      <div className="mt-4">
+        <FavoriteButton articleId={article.id} />
+      </div>
       {article.imageUrl && (
         <img
           src={article.imageUrl}

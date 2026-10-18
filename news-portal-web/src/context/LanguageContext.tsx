@@ -50,6 +50,13 @@ const messages = {
     noArticles: "სტატიები ვერ მოიძებნა",
     noArticlesHint: "სცადე სხვა კატეგორია ან მოგვიანებით დაბრუნდი",
     loadError: "სიახლეების ჩატვირთვა ვერ მოხერხდა",
+    addFavorite: "ფავორიტებში",
+    removeFavorite: "ფავორიტებიდან ამოშლა",
+    favoritesLoginTitle: "ფავორიტები მხოლოდ რეგისტრირებული იუზერებისთვისაა",
+    favoritesLoginHint: "შედი ან დარეგისტრირდი, რომ შეინახო სტატიები",
+    myFavorites: "ჩემი ფავორიტები",
+    noFavorites: "ფავორიტები ცარიელია",
+    noFavoritesHint: "სტატიის გვერდზე დაამატე გულის ღილაკით",
   },
   en: {
     appName: "News Portal",
@@ -84,6 +91,13 @@ const messages = {
     noArticles: "No articles found",
     noArticlesHint: "Try another category or come back later",
     loadError: "Failed to load articles",
+    addFavorite: "Add to favorites",
+    removeFavorite: "Remove from favorites",
+    favoritesLoginTitle: "Favorites are for registered users",
+    favoritesLoginHint: "Sign in or register to save articles",
+    myFavorites: "My favorites",
+    noFavorites: "No favorites yet",
+    noFavoritesHint: "Open an article and tap the heart button",
   },
 } as const;
 
