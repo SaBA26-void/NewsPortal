@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { useAuth } from "./context/AuthContext";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
@@ -8,17 +8,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { ManageArticlesPage } from "./pages/ManageArticlesPage";
 import { RegisterPage } from "./pages/RegisterPage";
 
-function ManageArticlesRoute() {
-  const { canManageArticles, isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!canManageArticles) {
-    return <Navigate to="/" replace />;
-  }
-
+function ManageRoute() {
+  const { canManageArticles } = useAuth();
+  if (!canManageArticles) return <Navigate to="/login" replace />;
   return <ManageArticlesPage />;
 }
 
@@ -32,7 +24,7 @@ export default function App() {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/manage/articles" element={<ManageArticlesRoute />} />
+          <Route path="/manage/articles" element={<ManageRoute />} />
         </Route>
       </Routes>
     </BrowserRouter>

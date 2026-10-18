@@ -1,11 +1,8 @@
 import axios from "axios";
-import { getToken, clearAuth } from "../utils/tokenStorage";
+import { clearAuth, getToken } from "../utils/tokenStorage";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 api.interceptors.request.use((config) => {
@@ -20,7 +17,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // ტოკენი არასწორი/ვადაგასული — გავასუფთავოთ
       clearAuth();
     }
     return Promise.reject(error);

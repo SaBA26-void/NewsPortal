@@ -1,12 +1,7 @@
-/* eslint-disable react-refresh/only-export-components -- Provider + hook in one file is OK for Context */
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import type { Language } from "../types/language";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, type ReactNode } from "react";
+
+export type Language = "ka" | "en";
 
 type LanguageContextValue = {
   language: Language;
@@ -24,52 +19,38 @@ const messages = {
     login: "შესვლა",
     register: "რეგისტრაცია",
     logout: "გასვლა",
-    theme: "თემა",
-    light: "ნათელი",
-    dark: "მუქი",
-    system: "სისტემური",
-    language: "ენა",
     welcome: "მოგესალმებით",
     email: "ელფოსტა",
     password: "პაროლი",
     firstName: "სახელი",
     lastName: "გვარი",
-    submitLogin: "შესვლა",
-    submitRegister: "რეგისტრაცია",
-    noAccount: "არ გაქვს ანგარიში?",
-    haveAccount: "უკვე გაქვს ანგარიში?",
     manageArticles: "სტატიების მართვა",
-    loggingIn: "მიმდინარეობს...",
-    errorGeneric: "რაღაც შეცდომა მოხდა",
-    validationAuth: "ელფოსტა და პაროლი (მინ. 6 სიმბოლო) სავალდებულოა",
+    wait: "გთხოვთ მოითმინოთ...",
+    error: "შეცდომა მოხდა",
     articles: "სტატიები",
     allCategories: "ყველა კატეგორია",
     readMore: "წაიკითხე",
-    prevPage: "წინა",
-    nextPage: "შემდეგი",
+    prev: "წინა",
+    next: "შემდეგი",
     noArticles: "სტატიები ვერ მოიძებნა",
-    noArticlesHint: "სცადე სხვა კატეგორია ან მოგვიანებით დაბრუნდი",
-    loadError: "სიახლეების ჩატვირთვა ვერ მოხერხდა",
     addFavorite: "ფავორიტებში",
-    removeFavorite: "ფავორიტებიდან ამოშლა",
-    favoritesLoginTitle: "ფავორიტები მხოლოდ რეგისტრირებული იუზერებისთვისაა",
-    favoritesLoginHint: "შედი ან დარეგისტრირდი, რომ შეინახო სტატიები",
+    removeFavorite: "წაშლა ფავორიტებიდან",
+    needLogin: "ფავორიტებისთვის საჭიროა შესვლა",
     myFavorites: "ჩემი ფავორიტები",
     noFavorites: "ფავორიტები ცარიელია",
-    noFavoritesHint: "სტატიის გვერდზე დაამატე გულის ღილაკით",
     newArticle: "ახალი სტატია",
-    editArticle: "რედაქტირება",
-    deleteArticle: "წაშლა",
+    edit: "რედაქტირება",
+    delete: "წაშლა",
     title: "სათაური",
-    content: "შინაარსი",
+    content: "ტექსტი",
     imageUrl: "სურათის URL",
     category: "კატეგორია",
     save: "შენახვა",
     cancel: "გაუქმება",
-    confirmDelete: "ნამდვილად წავშალოთ ეს სტატია?",
-    myArticles: "ჩემი სტატიები",
-    allArticlesAdmin: "ყველა სტატია",
     selectCategory: "აირჩიე კატეგორია",
+    light: "ნათელი",
+    dark: "მუქი",
+    system: "სისტემა",
   },
   en: {
     appName: "News Portal",
@@ -78,52 +59,38 @@ const messages = {
     login: "Login",
     register: "Register",
     logout: "Logout",
-    theme: "Theme",
-    light: "Light",
-    dark: "Dark",
-    system: "System",
-    language: "Language",
     welcome: "Welcome",
     email: "Email",
     password: "Password",
     firstName: "First name",
     lastName: "Last name",
-    submitLogin: "Sign in",
-    submitRegister: "Create account",
-    noAccount: "Don't have an account?",
-    haveAccount: "Already have an account?",
     manageArticles: "Manage articles",
-    loggingIn: "Please wait...",
-    errorGeneric: "Something went wrong",
-    validationAuth: "Email and password (min 6 characters) are required",
+    wait: "Please wait...",
+    error: "Something went wrong",
     articles: "Articles",
     allCategories: "All categories",
     readMore: "Read more",
-    prevPage: "Previous",
-    nextPage: "Next",
+    prev: "Prev",
+    next: "Next",
     noArticles: "No articles found",
-    noArticlesHint: "Try another category or come back later",
-    loadError: "Failed to load articles",
     addFavorite: "Add to favorites",
-    removeFavorite: "Remove from favorites",
-    favoritesLoginTitle: "Favorites are for registered users",
-    favoritesLoginHint: "Sign in or register to save articles",
+    removeFavorite: "Remove favorite",
+    needLogin: "Please login to use favorites",
     myFavorites: "My favorites",
     noFavorites: "No favorites yet",
-    noFavoritesHint: "Open an article and tap the heart button",
     newArticle: "New article",
-    editArticle: "Edit",
-    deleteArticle: "Delete",
+    edit: "Edit",
+    delete: "Delete",
     title: "Title",
     content: "Content",
     imageUrl: "Image URL",
     category: "Category",
     save: "Save",
     cancel: "Cancel",
-    confirmDelete: "Delete this article?",
-    myArticles: "My articles",
-    allArticlesAdmin: "All articles",
-    selectCategory: "Select a category",
+    selectCategory: "Select category",
+    light: "Light",
+    dark: "Dark",
+    system: "System",
   },
 } as const;
 
@@ -131,8 +98,7 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as Language | null;
-    return saved ?? "ka";
+    return (localStorage.getItem(STORAGE_KEY) as Language) || "ka";
   });
 
   const setLanguage = (lang: Language) => {
@@ -141,17 +107,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
   };
 
-  const value = useMemo(
-    () => ({
-      language,
-      setLanguage,
-      t: (key: keyof typeof messages.ka) => messages[language][key],
-    }),
-    [language],
-  );
+  const t = (key: keyof typeof messages.ka) => messages[language][key];
 
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

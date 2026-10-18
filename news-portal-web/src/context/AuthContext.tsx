@@ -1,14 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { loginRequest, registerRequest } from "../api/authApi";
 import type {
-  AuthResponse,
   AuthUser,
   LoginRequest,
   RegisterRequest,
@@ -23,9 +16,7 @@ import {
 
 type AuthContextValue = {
   user: AuthUser | null;
-  token: string | null;
   isAuthenticated: boolean;
-  isJournalist: boolean;
   isSuperAdmin: boolean;
   canManageArticles: boolean;
   login: (data: LoginRequest) => Promise<void>;
@@ -35,23 +26,19 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function toUser(res: AuthResponse): AuthUser {
-  return {
-    id: res.id,
-    firstName: res.firstName,
-    lastName: res.lastName,
-    email: res.email,
-    role: res.role as UserRole,
-  };
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
   const [token, setToken] = useState<string | null>(() => getToken());
 
   const login = async (data: LoginRequest) => {
     const res = await loginRequest(data);
-    const nextUser = toUser(res);
+    const nextUser: AuthUser = {
+      id: res.id,
+      firstName: res.firstName,
+      lastName: res.lastName,
+      email: res.email,
+      role: res.role as UserRole,
+    };
     saveAuth(res.token, nextUser);
     setToken(res.token);
     setUser(nextUser);
@@ -59,7 +46,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterRequest) => {
     const res = await registerRequest(data);
-    const nextUser = toUser(res);
+    const nextUser: AuthUser = {
+      id: res.id,
+      firstName: res.firstName,
+      lastName: res.lastName,
+      email: res.email,
+      role: res.role as UserRole,
+    };
     saveAuth(res.token, nextUser);
     setToken(res.token);
     setUser(nextUser);
@@ -71,22 +64,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const value = useMemo(() => {
-    const role = user?.role;
-    return {
-      user,
-      token,
-      isAuthenticated: !!token && !!user,
-      isJournalist: role === "Journalist",
-      isSuperAdmin: role === "SuperAdmin",
-      canManageArticles: role === "Journalist" || role === "SuperAdmin",
-      login,
-      register,
-      logout,
-    };
-  }, [user, token]);
+  const role = user?.role;
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!token && !!user,
+        isSuperAdmin: role === "SuperAdmin",
+        canManageArticles: role === "Journalist" || role === "SuperAdmin",
+        login,
+        register,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

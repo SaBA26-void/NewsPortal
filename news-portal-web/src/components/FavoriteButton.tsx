@@ -9,49 +9,29 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 
-type Props = {
-  articleId: number;
-};
-
-export function FavoriteButton({ articleId }: Props) {
+export function FavoriteButton({ articleId }: { articleId: number }) {
   const { isAuthenticated } = useAuth();
   const { t } = useLanguage();
-
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [showLoginHint, setShowLoginHint] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    let cancelled = false;
-
-    const load = async () => {
-      try {
-        const value = await checkFavorite(articleId);
-        if (!cancelled) setIsFavorite(value);
-      } catch {
-        if (!cancelled) setIsFavorite(false);
-      }
-    };
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
+    checkFavorite(articleId)
+      .then(setIsFavorite)
+      .catch(() => setIsFavorite(false));
   }, [articleId, isAuthenticated]);
-
-  const favorite = isAuthenticated ? isFavorite : false;
-  const guestPromptVisible = !isAuthenticated && showGuestPrompt;
 
   const onClick = async () => {
     if (!isAuthenticated) {
-      setShowGuestPrompt(true);
+      setShowLoginHint(true);
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
       if (isFavorite) {
         await removeFavorite(articleId);
         setIsFavorite(false);
@@ -60,7 +40,7 @@ export function FavoriteButton({ articleId }: Props) {
         setIsFavorite(true);
       }
     } catch {
-      /* keep current UI state */
+      /* ignore */
     } finally {
       setLoading(false);
     }
@@ -72,35 +52,27 @@ export function FavoriteButton({ articleId }: Props) {
         type="button"
         onClick={onClick}
         disabled={loading}
-        className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition disabled:opacity-60 ${
-          favorite
-            ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-700/30 dark:text-brand-100"
-            : "border-slate-300 text-ink-700 hover:border-brand-500 dark:border-slate-700 dark:text-slate-200"
+        className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm disabled:opacity-60 ${
+          isAuthenticated && isFavorite
+            ? "border-brand-500 bg-brand-50 text-brand-700"
+            : "border-slate-300 dark:border-slate-700"
         }`}
       >
-        <Heart size={16} className={favorite ? "fill-current" : ""} />
-        {favorite ? t("removeFavorite") : t("addFavorite")}
+        <Heart
+          size={16}
+          className={isAuthenticated && isFavorite ? "fill-current" : ""}
+        />
+        {isAuthenticated && isFavorite ? t("removeFavorite") : t("addFavorite")}
       </button>
 
-      {guestPromptVisible && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-900/50 dark:bg-amber-950/40">
-          <p className="font-medium text-ink-900 dark:text-white">
-            {t("favoritesLoginTitle")}
-          </p>
-          <p className="mt-1 text-ink-500 dark:text-slate-400">
-            {t("favoritesLoginHint")}
-          </p>
-          <div className="mt-3 flex gap-2">
-            <Link
-              to="/login"
-              className="rounded-md bg-brand-600 px-3 py-1.5 text-white hover:bg-brand-700"
-            >
+      {showLoginHint && !isAuthenticated && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-900 dark:bg-amber-950/40">
+          <p>{t("needLogin")}</p>
+          <div className="mt-2 flex gap-2">
+            <Link to="/login" className="text-brand-600">
               {t("login")}
             </Link>
-            <Link
-              to="/register"
-              className="rounded-md border border-slate-300 px-3 py-1.5 dark:border-slate-600"
-            >
+            <Link to="/register" className="text-brand-600">
               {t("register")}
             </Link>
           </div>

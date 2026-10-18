@@ -11,45 +11,33 @@ export function ArticleDetailPage() {
   const { language, t } = useLanguage();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!id) return;
 
-    let cancelled = false;
-
     const load = async () => {
       try {
         setLoading(true);
-        setError(false);
-        const data = await fetchArticleById(Number(id));
-        if (cancelled) return;
-        setArticle(data);
+        setArticle(await fetchArticleById(Number(id)));
       } catch {
-        if (!cancelled) {
-          setArticle(null);
-          setError(true);
-        }
+        setArticle(null);
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     };
 
     void load();
-    return () => {
-      cancelled = true;
-    };
   }, [id]);
 
   if (loading) return <Spinner />;
 
-  if (error || !article) {
+  if (!article) {
     return (
       <section>
-        <Link to="/" className="text-sm font-medium text-brand-600">
+        <Link to="/" className="text-brand-600">
           ← {t("home")}
         </Link>
-        <p className="mt-6 text-ink-500">{t("noArticles")}</p>
+        <p className="mt-4">{t("noArticles")}</p>
       </section>
     );
   }
@@ -59,14 +47,12 @@ export function ArticleDetailPage() {
 
   return (
     <article>
-      <Link to="/" className="text-sm font-medium text-brand-600">
+      <Link to="/" className="text-sm text-brand-600">
         ← {t("home")}
       </Link>
-      <p className="mt-4 text-xs font-medium uppercase tracking-wide text-brand-600">
-        {category}
-      </p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight">{article.title}</h1>
-      <p className="mt-2 text-sm text-ink-500 dark:text-slate-400">
+      <p className="mt-4 text-xs font-medium text-brand-600">{category}</p>
+      <h1 className="mt-2 text-3xl font-bold">{article.title}</h1>
+      <p className="mt-2 text-sm text-ink-500">
         {article.authorName} ·{" "}
         {new Date(article.createdAt).toLocaleDateString()}
       </p>
@@ -80,7 +66,7 @@ export function ArticleDetailPage() {
           className="mt-6 max-h-96 w-full rounded-xl object-cover"
         />
       )}
-      <div className="mt-6 whitespace-pre-wrap leading-relaxed text-ink-700 dark:text-slate-200">
+      <div className="mt-6 whitespace-pre-wrap leading-relaxed">
         {article.content}
       </div>
     </article>
